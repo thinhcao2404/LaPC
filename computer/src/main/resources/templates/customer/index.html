@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ - Cửa hàng Máy Tính</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="/js/cart.js"></script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/header::header}"></div>
+<div class="container mt-4 mb-5">
+    <div class="row g-3">
+
+        <div class="col-lg-3 col-md-4 d-none d-md-block">
+            <div class="bg-white rounded shadow-sm category-menu h-100">
+                <a th:each="cat : ${categoryList}" th:href="@{/category/{id}(id=${cat.id})}">
+                    <i class="fa-solid fa-desktop me-2 text-secondary"></i>
+                    <span th:text="${cat.name}">Tên Danh Mục</span>
+                    <i class="fa-solid fa-chevron-right ms-auto" style="font-size: 10px; color: #ccc;"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
+            <div class="d-flex flex-column gap-3 h-100">
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="ratio rounded shadow-sm overflow-hidden" style="--bs-aspect-ratio: 35%;">
+                            <img th:src="@{/images/thinhpc-banner-main.png}" alt="Banner Chính" style="object-fit: cover;">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="ratio rounded shadow-sm overflow-hidden" style="--bs-aspect-ratio: 35%;">
+                            <img th:src="@{/images/banner.jpg}" alt="Banner đáy 1" style="object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="ratio rounded shadow-sm overflow-hidden" style="--bs-aspect-ratio: 35%;">
+                            <img th:src="@{/images/banner.jpg}" alt="Banner đáy 2" style="object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 d-none d-lg-block">
+                        <div class="ratio rounded shadow-sm overflow-hidden" style="--bs-aspect-ratio: 35%;">
+                            <img th:src="@{/images/banner.jpg}" alt="Banner đáy 3" style="object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </div>
+
+<div class="container mt-4 mb-5" th:each="cat : ${featuredCategories}">
+
+    <div class="bg-white p-3 rounded shadow-sm border-top border-primary border-3">
+
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="fw-bold text-custom-blue m-0 text-uppercase" th:text="${cat.name}">TÊN DANH MỤC</h4>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <a th:href="@{/category/{id}(id=${cat.id})}" class="text-decoration-none text-primary fw-bold">
+                    Xem tất cả <i class="fa-solid fa-angle-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+
+            <div class="col" th:each="p : ${cat.products}">
+                <div class="card h-100 shadow-sm border-light product-card p-2 transition-all">
+
+                    <a th:href="@{/product/detail(id=${p.id})}" class="text-decoration-none d-block">
+                        <img th:src="${p.mainImage != null ? p.mainImage : 'https://via.placeholder.com/300x300'}"
+                             class="card-img-top p-2" alt="Sản phẩm" style="object-fit: contain; aspect-ratio: 1/1;">
+                    </a>
+
+                    <div class="card-body d-flex flex-column p-2">
+
+                        <h6 class="card-title text-dark fw-bold text-truncate-2 mb-3" style="font-size: 0.85rem; min-height: 2.5rem;" th:text="${p.name}">
+                            Tên sản phẩm mẫu
+                        </h6>
+
+                        <div class="text-danger fw-bold fs-5 mt-auto">
+                            <span th:if="${not #lists.isEmpty(p.variants)}" th:text="${p.variants[0].price}">0</span>
+
+                            <span th:if="${#lists.isEmpty(p.variants)}">Liên hệ</span> đ
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer::footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

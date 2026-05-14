@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+    <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${product.name} + ' - THỊNH PC'"></title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="stylesheet" th:href="@{/css/product_detail.css}">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    </head>
+    <body>
+
+    <header th:replace="~{fragments/header::header}"></header>
+
+    <div class="container py-4">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><a href="/static">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/category/{id}(id=${product.category.id})}" th:text="${product.category.name}"></a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}"></li>
+            </ol>
+        </nav>
+
+        <div class="product-container p-4">
+            <div class="row g-5">
+
+                <div class="col-md-5">
+                    <div class="border rounded p-3 mb-3 text-center">
+                        <img id="mainImage" th:src="${product.mainImage != null ? product.mainImage : 'https://via.placeholder.com/500x400?text=HINH+SAN+PHAM'}"
+                             alt="Sản phẩm" class="img-fluid object-fit-contain" style="max-height: 400px;">
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <h3 class="fw-bold mb-2" th:text="${product.name}"></h3>
+
+                    <p class="text-muted small mb-3">Mã SKU: <span class="text-dark" th:if="${not #lists.isEmpty(product.variants)}" th:text="${product.variants[0].sku}"></span></p>
+
+                    <div class="d-flex align-items-end mb-4">
+                        <h2 class="text-primary fw-bold m-0 me-3" id="displayPrice"
+                            th:if="${not #lists.isEmpty(product.variants)}"
+                            th:text="${#numbers.formatDecimal(product.variants[0].price, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                        </h2>
+                        <h2 class="text-danger fw-bold m-0 me-3" th:if="${#lists.isEmpty(product.variants)}">
+                            Giá: Liên hệ
+                        </h2>
+                    </div>
+
+                    <input type="hidden" id="selectedVariantId"
+                           th:if="${not #lists.isEmpty(product.variants)}"
+                           th:value="${product.variants[0].id}">
+                    <input type="hidden" id="selectedVariantStock"
+                           th:if="${not #lists.isEmpty(product.variants)}"
+                           th:value="${product.variants[0].stock}">
+                    <input type="hidden" id="quantityInput" value="1">
+
+                    <div class="mb-4" th:if="${#lists.size(product.variants) > 1}">
+                        <p class="fw-bold mb-2">Chọn phiên bản:</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button th:each="v, iterStat : ${product.variants}"
+                                    type="button" class="variant-btn"
+                                    th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                                    th:data-id="${v.id}"
+                                    th:data-price="${v.price}"
+                                    th:data-stock="${v.stock}"  onclick="selectVariant(this)">
+
+                            <span th:each="attr, stat : ${v.attributes}"
+                                  th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4" th:if="${#lists.size(product.variants) == 1}">
+                        <p class="fw-bold mb-2">Cấu hình mặc định:</p>
+                        <span class="badge bg-light text-dark border p-2 fs-6 rounded-pill">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i>
+                        <span th:each="attr, stat : ${product.variants[0].attributes}"
+                              th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                    </span>
+                    </div>
+
+                    <div class="mb-4 pb-3 border-bottom product-description"
+                         th:if="${product.description != null and product.description != ''}"
+                         th:utext="${product.description}">
+                    </div>
+
+                    <div class="d-flex flex-column gap-3 mt-4">
+                        <button type="button" class="btn btn-buy-now py-3 text-center d-flex flex-column align-items-center justify-content-center" onclick="buyNow()">
+                            <span class="fw-bold fs-5">MUA NGAY</span>
+                            <span style="font-size: 13px; font-weight: normal;">Giao hàng tận nơi</span>
+                        </button>
+
+                        <button type="button" class="btn btn-add-cart py-3 text-center d-flex flex-column align-items-center justify-content-center" onclick="addToCartDetail()">
+                            <span class="fw-bold fs-5">THÊM VÀO GIỎ</span>
+                            <span style="font-size: 13px; font-weight: normal;">Thêm sản phẩm vào giỏ hàng</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div th:replace="~{fragments/footer::footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/cart.js"></script>
+
+    </body>
+    </html>

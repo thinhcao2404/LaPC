@@ -1,0 +1,28 @@
+.bg-custom-blue { background-color: #1a56db; }
+.search-bar { border-radius: 20px; overflow: hidden; }
+.search-bar input { border: none; box-shadow: none; }
+.search-bar button { border: none; background: #fff; color: #1a56db; }
+body { background-color: #f4f6f9; }
+.order-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.order-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 15px 20px;
+}
+.product-item {
+    border-bottom: 1px dashed #eee;
+    padding: 15px 0;
+}
+.product-item:last-child { border-bottom: none; }
+.badge-status { font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; }
+.total-row {
+    background-color: #fffaf0;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+}

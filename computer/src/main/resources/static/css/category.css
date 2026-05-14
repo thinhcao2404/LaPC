@@ -1,0 +1,49 @@
+.bg-custom-blue { background-color: #1a56db; }
+.text-custom-blue { color: #1a56db; }
+.category-menu {
+    padding: 0;
+    overflow: hidden;
+}
+.category-menu a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    border-left: 4px solid transparent;
+}
+
+.category-menu a i.fa-folder { color: #757575; transition: 0.2s; }
+.category-menu a i.fa-chevron-right { color: #ccc; transition: 0.2s; }
+
+.category-menu a:hover,
+.category-menu a.active {
+    background-color: #eaf1ff;
+    border-left: 4px solid #1a56db;
+    color: #1a56db;
+    font-weight: 600;
+}
+
+.category-menu a:hover i.fa-folder,
+.category-menu a.active i.fa-folder,
+.category-menu a:hover i.fa-chevron-right,
+.category-menu a.active i.fa-chevron-right {
+    color: #1a56db !important;
+}
+
+.category-menu a:last-child { border-bottom: none; }
+/* ================= KẾT THÚC CSS MENU ================= */
+
+.search-bar { border-radius: 20px; overflow: hidden; }
+.search-bar input { border: none; box-shadow: none; }
+.search-bar button { border: none; background: #fff; color: #1a56db; }
+
+.product-card { transition: all 0.3s ease; }
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    cursor: pointer;
+}

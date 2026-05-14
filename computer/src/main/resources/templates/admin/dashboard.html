@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - THỊNH PC Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard-admin.css}">
+</head>
+<body>
+<div class="d-flex">
+    <div class="sidebar text-white" style="width: 250px;">
+        <h4 class="text-center py-4 mb-0 fw-bold border-bottom border-secondary">
+            <i class="fa-solid fa-desktop text-info me-2"></i>THỊNH PC
+        </h4>
+        <div class="mt-3" th:fragment="menu">
+            <a href="/admin" class="active"><i class="fa-solid fa-gauge me-2"></i> Tổng quan</a>
+            <a href="/admin/orders"><i class="fa-solid fa-cart-shopping me-2"></i> Quản lý Đơn hàng</a>
+            <a href="/admin/products"><i class="fa-solid fa-box me-2"></i> Quản lý Sản phẩm</a>
+            <a href="/admin/accounts"><i class="fa-solid fa-users me-2"></i> Quản lý Tài khoản</a>
+            <hr class="border-secondary mx-3">
+            <form th:action="@{/logout}" method="post" class="m-0 p-0">
+                <button type="submit" class="btn btn-link text-danger text-decoration-none px-4 py-2 text-start w-100 rounded-0">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="flex-grow-1 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-dark m-0">Bảng điều khiển</h3>
+            <div class="dropdown">
+                <button class="btn btn-white bg-white shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="rounded-circle me-2" width="32">
+                    <span class="fw-bold">Administrator</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm bg-primary text-white h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 text-white-50 fw-bold">Tổng Đơn Hàng</h6>
+                            <h2 class="mb-0 fw-bold" th:text="${totalOrders}">0</h2>
+                        </div>
+                        <i class="fa-solid fa-bag-shopping fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm bg-success text-white h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 text-white-50 fw-bold">Tổng Sản Phẩm</h6>
+                            <h2 class="mb-0 fw-bold" th:text="${totalProducts}">0</h2>
+                        </div>
+                        <i class="fa-solid fa-boxes-stacked fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card shadow-sm bg-warning text-dark h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 text-black-50 fw-bold">Khách Hàng</h6>
+                            <h2 class="mb-0 fw-bold" th:text="${totalCustomers}">0</h2>
+                        </div>
+                        <i class="fa-solid fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 fw-bold"><i class="fa-solid fa-bell text-warning me-2"></i> Hoạt động gần đây</h6>
+            </div>
+            <div class="card-body text-muted">
+                Chào mừng bạn quay trở lại trang quản trị. Hãy kiểm tra mục Quản lý đơn hàng để xem có đơn hàng nào mới cần duyệt không nhé!
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

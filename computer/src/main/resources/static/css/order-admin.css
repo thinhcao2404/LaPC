@@ -1,0 +1,4 @@
+body { background-color: #f4f6f9; }
+.sidebar { min-height: 100vh; background-color: #343a40; }
+.sidebar a { color: #c2c7d0; text-decoration: none; padding: 12px 20px; display: block; transition: 0.3s; }
+.sidebar a:hover, .sidebar a.active { background-color: #007bff; color: white; }

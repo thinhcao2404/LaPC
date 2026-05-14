@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa Sản phẩm - Admin THỊNH PC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/product-edit.css}">
+</head>
+<body>
+
+<div class="d-flex">
+    <div class="sidebar text-white" style="width: 250px;">
+        <h4 class="text-center py-4 mb-0 fw-bold border-bottom border-secondary">
+            <i class="fa-solid fa-desktop text-info me-2"></i>THỊNH PC
+        </h4>
+        <div th:replace="~{admin/dashboard::menu}"></div>
+    </div>
+
+    <div class="flex-grow-1 p-4">
+        <div class="d-flex align-items-center mb-4">
+            <a th:href="@{/admin/products}" class="btn btn-outline-secondary btn-sm me-3"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+            <h3 class="fw-bold mb-0">Chỉnh sửa Sản phẩm</h3>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/admin/products/edit}" th:object="${product}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-white fw-bold py-3"><i class="fa-solid fa-laptop me-2"></i>Thông tin chung</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Tên máy tính *</label>
+                                <input type="text" th:field="*{name}" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Thương hiệu</label>
+                                <select name="brand" class="form-select">
+                                    <option value="">-- Chọn thương hiệu --</option>
+                                    <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}" th:selected="${product.brand != null and product.brand.id == b.id}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Danh mục</label>
+                                <select name="category" class="form-select" required>
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${product.category != null and product.category.id == c.id}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Link Ảnh chính</label>
+                                <input type="text" th:field="*{mainImage}" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Mô tả sản phẩm</label>
+                                <textarea th:field="*{description}" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold"><i class="fa-solid fa-microchip me-2"></i>Các cấu hình hiện tại</span>
+                            <button type="button" class="btn btn-sm btn-success" onclick="addVariantRow()">
+                                <i class="fa-solid fa-plus me-1"></i> Thêm cấu hình mới
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-borderless align-middle m-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th style="width: 25%;">Mã SKU</th>
+                                    <th style="width: 35%;">Các thuộc tính động</th>
+                                    <th style="width: 20%;">Giá bán</th>
+                                    <th style="width: 15%;">Tồn kho</th>
+                                    <th style="width: 5%;">Xóa</th>
+                                </tr>
+                                </thead>
+                                <tbody id="variants-body">
+
+                                <tr th:each="variant, vStat : *{variants}">
+                                    <td>
+                                        <input type="hidden" th:field="*{variants[__${vStat.index}__].id}">
+                                        <input type="text" th:field="*{variants[__${vStat.index}__].sku}" class="form-control" required>
+                                    </td>
+
+                                    <td>
+                                        <div th:id="'attrs-' + ${vStat.index}">
+                                            <div th:each="attr, aStat : ${variant.attributes}" class="d-flex mb-1">
+                                                <input type="hidden" th:field="*{variants[__${vStat.index}__].attributes[__${aStat.index}__].id}">
+                                                <input type="text" th:field="*{variants[__${vStat.index}__].attributes[__${aStat.index}__].name}" class="form-control form-control-sm me-1" placeholder="Tên">
+                                                <input type="text" th:field="*{variants[__${vStat.index}__].attributes[__${aStat.index}__].value}" class="form-control form-control-sm" placeholder="Giá trị">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 mt-1" th:onclick="'addAttribute(' + ${vStat.index} + ')'">
+                                            <i class="fa-solid fa-plus me-1"></i>Thêm thuộc tính
+                                        </button>
+                                    </td>
+
+                                    <td><input type="number" th:field="*{variants[__${vStat.index}__].price}" class="form-control" required></td>
+                                    <td><input type="number" th:field="*{variants[__${vStat.index}__].stock}" class="form-control"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg fw-bold px-5 shadow-sm text-dark">
+                            <i class="fa-solid fa-floppy-disk me-2"></i> LƯU THAY ĐỔI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:inline="javascript">
+    // Khai báo biến toàn cục (Global Variables) cho file JS dùng ké
+    let variantIndex = /*[[${product.variants.size()}]]*/ 0;
+
+    let attrCounts = {};
+    /*[# th:each="variant, vStat : ${product.variants}"]*/
+    attrCounts[ /*[[${vStat.index}]]*/ 0 ] = /*[[${variant.attributes.size()}]]*/ 0;
+    /*[/]*/
+</script>
+<script th:src="@{/js/uproduct.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
