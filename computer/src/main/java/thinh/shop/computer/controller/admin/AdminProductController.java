@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import thinh.shop.computer.dto.request.ProductUpdateRequest;
+import thinh.shop.computer.dto.request.VariantRequest;
 import thinh.shop.computer.entity.Product;
 import thinh.shop.computer.entity.ProductVariant;
 import thinh.shop.computer.entity.VariantAttribute;
@@ -15,6 +17,7 @@ import thinh.shop.computer.repository.ProductVariantRepository;
 import thinh.shop.computer.service.BrandService;
 import thinh.shop.computer.service.CategoryService;
 import thinh.shop.computer.service.ProductService;
+import thinh.shop.computer.service.ProductVariantService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,30 +30,30 @@ public class AdminProductController {
     @Autowired
     public BrandService brandService;
     @Autowired
-    public ProductRepository productRepository;
-    @Autowired
-    public ProductVariantRepository productVariantsRepository;
-    @Autowired
     public ProductService productService;
+    @Autowired
+    public ProductVariantService productVariantService;
+
     @GetMapping("/admin/products")
     public String manageProducts(Model model) {
         List<Product> products = productService.allProduct();
         model.addAttribute("products", products);
         return "admin/products";
     }
+
     @GetMapping("/admin/products/add")
     public String showAddProductForm(Model model) {
-        Product product = new Product();
+        ProductUpdateRequest request =  new ProductUpdateRequest();
 
-        product.setVariants(new java.util.ArrayList<>());
-        product.getVariants().add(new ProductVariant());
+        request.getVariants().add(new VariantRequest());
 
-        model.addAttribute("product", product);
+        model.addAttribute("product", request);
         model.addAttribute("categories",categoryService.getAllCategory());
         model.addAttribute("brands", brandService.getAllBrand());
 
         return "admin/product-add";
     }
+
     @PostMapping("/admin/products/add")
     public String saveProduct(@ModelAttribute("product") Product product, Model model) {
 
@@ -70,7 +73,7 @@ public class AdminProductController {
                 }
 
 
-                if (productVariantsRepository.existsBySku(currentSku)) {
+                if (productVariantService.existsBySku(currentSku)) {
                     model.addAttribute("errorMessage", "Lỗi: Mã SKU (" + currentSku + ") đã tồn tại trên hệ thống. Vui lòng đổi mã khác!");
                     model.addAttribute("categories", categoryService.getAllCategory());
                     model.addAttribute("brands", brandService.getAllBrand());
@@ -93,24 +96,27 @@ public class AdminProductController {
             }
         }
 
-        productRepository.save(product);
+        productService.save(product);
 
         return "redirect:admin/products";
     }
+
     @PostMapping("/admin/products/delete")
     public String  deleteProduct(@RequestParam("id") Long id) {
-        productRepository.deleteById(id);
+        productService.deleteById(id);
         return "redirect:admin/products";
     }
+
     @GetMapping("/admin/products/edit")
     public String editProduct(@RequestParam("id") Long id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+        Product product = productService.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
         model.addAttribute("product", product);
         model.addAttribute("categories",categoryService.getAllCategory());
         model.addAttribute("brands", brandService.getAllBrand());
         return "admin/product-edit";
 
     }
+
     @PostMapping("/admin/products/edit")
     public String updateProduct(@ModelAttribute("product") Product product, Model model) {
 
@@ -135,8 +141,8 @@ public class AdminProductController {
         }
 
         try {
-            productRepository.saveAndFlush(product);
-            return "redirect:admin/products";
+            productService.save(product);
+            return "redirect:/admin/products";
 
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Lỗi khi cập nhật: " + e.getMessage());

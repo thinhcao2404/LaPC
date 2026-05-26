@@ -23,6 +23,7 @@ public class ProductController {
     private AccountService accountService;
     @Autowired
     private CartService cartService;
+
     @GetMapping("/detail")
     public String viewProductDetail(@RequestParam("id") Long id, Model model, Principal principal) {
         Product product = productService.getProductById(id);

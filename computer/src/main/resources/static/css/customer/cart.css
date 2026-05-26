@@ -1,9 +1,3 @@
-.bg-custom-blue { background-color: #1a56db; }
-
-.search-bar { border-radius: 20px; overflow: hidden; }
-.search-bar input { border: none; box-shadow: none; }
-.search-bar button { border: none; background: #fff; color: #1a56db; }
-
 body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 .card-custom { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); background-color: #fff; }
 

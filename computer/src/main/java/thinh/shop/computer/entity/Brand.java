@@ -26,5 +26,6 @@ public class Brand {
     @OneToMany(mappedBy = "brand",cascade = CascadeType.ALL)
     private List<Product> products;
 
-
+    @ManyToMany(mappedBy = "brands")
+    private List<Category> categories;
 }
