@@ -1,0 +1,32 @@
+<div th:fragment="menu(activePage)" class="sidebar text-white" style="width: 250px;">
+
+    <h4 class="text-center py-4 mb-0 fw-bold border-bottom border-secondary">
+        <i class="fa-solid fa-desktop text-info me-2"></i>LaPC
+    </h4>
+
+    <div class="mt-3">
+        <a th:href="@{/admin}" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">
+            <i class="fa-solid fa-gauge me-2"></i> Tổng quan
+        </a>
+
+        <a th:href="@{/admin/orders}" th:classappend="${activePage == 'orders' ? 'active' : ''}">
+            <i class="fa-solid fa-cart-shopping me-2"></i> Quản lý Đơn hàng
+        </a>
+
+        <a th:href="@{/admin/products}" th:classappend="${activePage == 'products' ? 'active' : ''}">
+            <i class="fa-solid fa-box me-2"></i> Quản lý Sản phẩm
+        </a>
+
+        <a th:href="@{/admin/accounts}" th:classappend="${activePage == 'accounts' ? 'active' : ''}">
+            <i class="fa-solid fa-users me-2"></i> Quản lý Tài khoản
+        </a>
+
+        <hr class="border-secondary mx-3">
+
+        <form th:action="@{/logout}" method="post" class="m-0 p-0">
+            <button type="submit" class="btn btn-link text-danger text-decoration-none px-4 py-2 text-start w-100 rounded-0">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+            </button>
+        </form>
+    </div>
+</div>

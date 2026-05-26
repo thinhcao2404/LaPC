@@ -2,7 +2,7 @@ package thinh.shop.computer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import thinh.shop.computer.dto.CategoryHomeDTO;
+import thinh.shop.computer.dto.response.CategoryResponse;
 import thinh.shop.computer.entity.Category;
 import thinh.shop.computer.entity.Product;
 import thinh.shop.computer.repository.CategoryRepository;
@@ -10,6 +10,7 @@ import thinh.shop.computer.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -23,23 +24,26 @@ public class CategoryService {
         return  categoryRepository.findAll();
     }
 
-    public List<CategoryHomeDTO> getCategoriesWithTopProducts() {
-        // 1. Lấy tất cả danh mục
+    public List<CategoryResponse> getCategoriesWithTopProducts() {
         List<Category> categories = categoryRepository.findAll();
-        List<CategoryHomeDTO> dtoList = new ArrayList<>();
+        List<CategoryResponse> dtoList = new ArrayList<>();
 
-        // 2. Lặp qua từng danh mục
         for (Category cat : categories) {
-            // 3. Lấy 5 sản phẩm mới nhất của danh mục này
             List<Product> top5Products = productRepository.findTop5ByCategory_IdOrderByIdDesc(cat.getId());
 
-            // 4. Chỉ hiển thị danh mục nếu nó có ít nhất 1 sản phẩm
             if (!top5Products.isEmpty()) {
-                CategoryHomeDTO dto = new CategoryHomeDTO(cat.getId(), cat.getName(), top5Products);
+                CategoryResponse dto = new CategoryResponse(cat.getId(), cat.getName(), top5Products);
                 dtoList.add(dto);
             }
         }
 
         return dtoList;
+    }
+
+    public List<Category> findAll(){
+        return categoryRepository.findAll();
+    }
+    public Optional<Category> findById(long id){
+        return categoryRepository.findById(id);
     }
 }

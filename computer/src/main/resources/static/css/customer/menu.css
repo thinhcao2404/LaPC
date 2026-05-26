@@ -1,0 +1,69 @@
+.category-sidebar {
+    position: relative;
+}
+
+/* 2. Cố định tọa độ cho từng dòng Danh mục */
+.category-item {
+    position: relative;
+}
+
+/* 3. Đổi màu đỏ khi lia chuột vào Danh mục */
+.category-item:hover .category-link {
+    background-color: #f8f9fa;
+    color: #dc3545 !important;
+}
+.category-item:hover .category-link i.text-muted {
+    color: #dc3545 !important;
+}
+
+/* 4. Khung vô hình bọc ngoài bảng Hãng (Tạo khoảng đệm chống rớt chuột) */
+.sub-menu-wrapper {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 450px;
+    z-index: 1050;
+    padding-left: 15px; /* Cây cầu vô hình */
+}
+
+/* 5. Giao diện bảng Hãng bên trong */
+.sub-menu-panel {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* 6. Ma thuật hiện bảng Hãng khi hover vào Danh mục */
+.category-item:hover .sub-menu-wrapper {
+    display: block;
+    animation: fadeInMenu 0.2s ease-in-out;
+}
+
+/* 7. Định dạng chuẩn cho Nút Brand (Luôn to đều và căn giữa) */
+.brand-btn {
+    width: calc(33.333% - 0.5rem); /* Chia 3 cột */
+    height: 45px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.2s;
+
+    /* Ép chữ/ảnh luôn nằm chính giữa nút */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 8. Đổi màu nút Brand khi lia chuột */
+.brand-btn:hover {
+    background-color: #e1ebff !important;
+    border-color: #0d6efd !important;
+    color: #0d6efd !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 9. Hiệu ứng mờ ảo mượt mà */
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translateX(-5px); }
+    to { opacity: 1; transform: translateX(0); }
+}

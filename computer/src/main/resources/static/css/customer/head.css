@@ -1,0 +1,6 @@
+.bg-custom-blue { background-color: #1a56db; }
+.text-custom-blue { color: #1a56db; }
+
+.search-bar { border-radius: 20px; overflow: hidden; }
+.search-bar input { border: none; box-shadow: none; }
+.search-bar button { border: none; background: #fff; color: #1a56db; }

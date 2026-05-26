@@ -3,7 +3,7 @@ package thinh.shop.computer.service;
 import org.springframework.stereotype.Service;
 import thinh.shop.computer.entity.Account;
 import thinh.shop.computer.entity.Customer;
-import thinh.shop.computer.dto.RegisterDTO;
+import thinh.shop.computer.dto.request.RegisterRequest;
 import thinh.shop.computer.entity.Role;
 import thinh.shop.computer.repository.AccountRepository;
 import thinh.shop.computer.repository.CustomerRepository;
@@ -28,7 +28,7 @@ public class AccountService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerNewCustomer(RegisterDTO dto) throws Exception {
+    public void registerNewCustomer(RegisterRequest dto) throws Exception {
 
         if (accountRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new Exception("Tên đăng nhập đã tồn tại!");
@@ -53,9 +53,11 @@ public class AccountService {
 
         customerRepository.save(customer);
     }
+
     public Account  findByUsername(String username) throws Exception {
         return accountRepository.findByUsername(username).orElseThrow(()->new RuntimeException("Không tìm thấy user"));
     }
+
     public void save(Account account) {
         accountRepository.save(account);
     }

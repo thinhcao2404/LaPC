@@ -1,6 +1,7 @@
 package thinh.shop.computer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,15 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CartService {
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
-    private final ProductVariantRepository productVariantRepository;
-    private final AccountRepository accountRepository;
+    @Autowired
+    public CartRepository cartRepository;
+    @Autowired
+    public CartItemRepository cartItemRepository;
+    @Autowired
+    public ProductVariantRepository productVariantRepository;
+    @Autowired
+    public AccountRepository accountRepository;
+
    @Transactional
    public void addToCart(Customer customer, Long variantId, Integer quantity) {
        Cart cart = cartRepository.findByCustomer(customer)
