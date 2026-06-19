@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import thinh.shop.computer.dto.response.CartResponse;
 import thinh.shop.computer.entity.Account;
 import thinh.shop.computer.entity.Cart;
 import thinh.shop.computer.entity.CartItem;
@@ -50,15 +51,10 @@ try {
 
     cartService.addToCart(customer, variantId, quantity);
 
-    Cart cart = cartService.getCartByUsername(username);
-    int totalItems = 0;
-    if (cart != null && cart.getCartItem() != null) {
-        totalItems = cart.getCartItem().size();
-    }
-
+    CartResponse cartResponse = cartService.getCartResponse(username);
     response.put("status", "success");
     response.put("message", "Đã thêm vào giỏ hàng!");
-    response.put("calculatedTotal", totalItems);
+    response.put("calculatedTotal", cartResponse.getCalculatedTotal());
     return ResponseEntity.ok(response);
 }
  catch(RuntimeException e){
@@ -75,21 +71,11 @@ try {
         }
 
         String username = principal.getName();
-        Cart cart = cartService.getCartByUsername(username);
+        CartResponse cartResponse = cartService.getCartResponse(username);
 
-        if (cart != null) {
-            model.addAttribute("cartItems", cart.getCartItem());
-            double calculatedTotal = 0;
-            for (CartItem item : cart.getCartItem()) {
-                calculatedTotal += item.getQuantity() * item.getVariants().getPrice();
-            }
-            model.addAttribute("totalPrice", calculatedTotal);
-            model.addAttribute("calculatedTotal", cart.getCartItem().size());
-        } else {
-            model.addAttribute("cartItems", new ArrayList<>());
-            model.addAttribute("totalPrice", 0);
-            model.addAttribute("calculatedTotal", 0);
-        }
+        model.addAttribute("cartItems", cartResponse.getCartItems());
+        model.addAttribute("calculatedTotal", cartResponse.getCalculatedTotal());
+        model.addAttribute("totalPrice", cartResponse.getTotalPrice());
 
         return "customer/cart";
     }

@@ -21,7 +21,7 @@ public class Order {
 
     @CreationTimestamp
     @Column(updatable = false)
-        private LocalDateTime orderDate;
+    private LocalDateTime orderDate;
 
     private Double totalAmount;
 

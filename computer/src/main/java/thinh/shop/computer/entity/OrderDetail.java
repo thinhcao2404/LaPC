@@ -22,7 +22,6 @@ public class OrderDetail {
     @Column(nullable = false)
     private Double price;
 
-
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;

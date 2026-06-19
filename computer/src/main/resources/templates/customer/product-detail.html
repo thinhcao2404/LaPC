@@ -37,7 +37,7 @@
 
                     <p class="text-muted small mb-3">Mã SKU: <span class="text-dark" th:if="${not #lists.isEmpty(product.variants)}" th:text="${product.variants[0].sku}"></span></p>
 
-                    <div class="d-flex align-items-end mb-4">
+                    <div class="d-flex align-items-e nd mb-4">
                         <h2 class="text-primary fw-bold m-0 me-3" id="displayPrice"
                             th:if="${not #lists.isEmpty(product.variants)}"
                             th:text="${#numbers.formatDecimal(product.variants[0].price, 0, 'COMMA', 0, 'POINT')} + '₫'">
@@ -45,6 +45,20 @@
                         <h2 class="text-danger fw-bold m-0 me-3" th:if="${#lists.isEmpty(product.variants)}">
                             Giá: Liên hệ
                         </h2>
+                    </div>
+
+                    <div class="mb-4" style="font-size: 15px;">
+                        <span class="text-muted">Tình trạng: </span>
+
+                        <span id="displayStock" class="fw-bold fs-6"
+                              th:if="${not #lists.isEmpty(product.variants)}"
+                              th:classappend="${product.variants[0].stock > 0 ? 'text-success' : 'text-danger'}"
+                              th:text="${product.variants[0].stock > 0 ? 'Còn ' + product.variants[0].stock + ' sản phẩm' : 'Hết hàng'}">
+                        </span>
+
+                        <span class="fw-bold text-secondary" th:if="${#lists.isEmpty(product.variants)}">
+                            Đang cập nhật
+                        </span>
                     </div>
 
                     <input type="hidden" id="selectedVariantId"

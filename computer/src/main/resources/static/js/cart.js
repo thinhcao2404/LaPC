@@ -109,36 +109,41 @@ function submitCartRequest(isBuyNow) {
 }
 
 
-function selectVariant(buttonElement) {
-    const allButtons = document.querySelectorAll('.variant-btn');
-    allButtons.forEach(btn => btn.classList.remove('active'));
+function selectVariant(button) {
+    // 1. Gỡ class 'active' khỏi tất cả các nút và gán cho nút vừa bấm (Code cũ của em)
+    document.querySelectorAll('.variant-btn').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
 
-    buttonElement.classList.add('active');
+    // 2. Lấy data từ nút được bấm
+    let id = button.getAttribute("data-id");
+    let price = button.getAttribute("data-price");
+    let stock = parseInt(button.getAttribute("data-stock")); // Chuyển sang số nguyên để kiểm tra
 
-    // Cập nhật ID ẩn cho Giỏ hàng
-    const selectedId = buttonElement.getAttribute('data-id');
-    const hiddenIdInput = document.getElementById('selectedVariantId');
-    if(hiddenIdInput) {
-        hiddenIdInput.value = selectedId;
+    // 3. Cập nhật các input ẩn (Code cũ của em)
+    document.getElementById("selectedVariantId").value = id;
+    document.getElementById("selectedVariantStock").value = stock;
+
+    // 4. Cập nhật Giá hiển thị (Code cũ của em)
+    let displayPrice = document.getElementById("displayPrice");
+    if (displayPrice) {
+        displayPrice.innerText = new Intl.NumberFormat('vi-VN').format(price) + '₫';
     }
 
-    // THÊM MỚI: Cập nhật Tồn kho ẩn để hàm validateQuantity check
-    const selectedStock = buttonElement.getAttribute('data-stock');
-    const hiddenStockInput = document.getElementById('selectedVariantStock');
-    if(hiddenStockInput) {
-        hiddenStockInput.value = selectedStock;
+    // 5. MỚI THÊM: CẬP NHẬT TRẠNG THÁI TỒN KHO TRÊN MÀN HÌNH
+    let stockDisplay = document.getElementById("displayStock");
+    if (stockDisplay) {
+        if (stock > 0) {
+            stockDisplay.innerText = "Còn " + stock + " sản phẩm";
+            // Đổi màu xanh
+            stockDisplay.classList.remove('text-danger');
+            stockDisplay.classList.add('text-success');
+        } else {
+            stockDisplay.innerText = "Hết hàng";
+            // Đổi màu đỏ
+            stockDisplay.classList.remove('text-success');
+            stockDisplay.classList.add('text-danger');
+        }
     }
-
-    // THÊM MỚI: Reset ô nhập số lượng về 1 mỗi khi đổi màu sắc cho an toàn
-    const qtyInput = document.getElementById('quantityInput');
-    if(qtyInput) {
-        qtyInput.value = 1;
-    }
-
-    // Cập nhật Giá tiền hiển thị
-    const price = parseFloat(buttonElement.getAttribute('data-price'));
-    const formattedPrice = price.toLocaleString('vi-VN') + '₫';
-    document.getElementById('displayPrice').innerText = formattedPrice;
 }
 
 

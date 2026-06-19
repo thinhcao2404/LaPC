@@ -44,7 +44,10 @@
                                 <label class="form-label fw-medium">Thương hiệu</label>
                                 <select name="brand" class="form-select">
                                     <option value="">-- Chọn thương hiệu --</option>
-                                    <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}" th:selected="${product.brand != null and product.brand.id == b.id}"></option>
+                                    <option th:each="b : ${brands}"
+                                            th:value="${b.id}"
+                                            th:text="${b.name}"
+                                            th:selected="${product.brand != null and product.brand == b.id}"></option>
                                 </select>
                             </div>
 
@@ -52,7 +55,10 @@
                                 <label class="form-label fw-medium">Danh mục</label>
                                 <select name="category" class="form-select" required>
                                     <option value="">-- Chọn danh mục --</option>
-                                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${product.category != null and product.category.id == c.id}"></option>
+                                    <option th:each="c : ${categories}"
+                                            th:value="${c.id}"
+                                            th:text="${c.name}"
+                                            th:selected="${product.category != null and product.category == c.id}"></option>
                                 </select>
                             </div>
 

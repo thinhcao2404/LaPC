@@ -5,6 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import thinh.shop.computer.dto.response.BrandResponse;
+import thinh.shop.computer.dto.response.CategoryResponse;
+import thinh.shop.computer.dto.response.ProductResponse;
 import thinh.shop.computer.entity.Brand;
 import thinh.shop.computer.entity.Category;
 import thinh.shop.computer.entity.Product;
@@ -24,18 +27,21 @@ public class CategoryController {
 
     @GetMapping("/category/{id}")
     public String  category(Model model, @PathVariable Long id) {
-        List<Category> categoryList = categoryService.findAll();
+
+        List<CategoryResponse> categoryList = categoryService.getAllCategories();
         model.addAttribute("categoryList",categoryList);
 
-        Category category =  categoryService.findById(id).orElse(null);
-        model.addAttribute("category",category);
+        CategoryResponse categoryResponse =  categoryService.getCategoryById(id);
+        model.addAttribute("category",categoryResponse);
 
-        if(category!=null){
-            List<Product> productList = productService.findByCategory_Id(category.getId());
+        if(categoryResponse!=null){
+            List<ProductResponse> productList = productService.findByCategory_Id(categoryResponse.getId());
             model.addAttribute("productList",productList);
         }
-
-        List<Brand> brandList = category.getBrands();
+        if (categoryResponse == null) {
+            return "redirect:/";
+        }
+        List<BrandResponse> brandList = categoryResponse.getBrands();
         model.addAttribute("brandList",brandList);
 
         return "customer/category";

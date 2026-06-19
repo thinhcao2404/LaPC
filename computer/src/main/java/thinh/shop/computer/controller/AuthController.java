@@ -67,15 +67,22 @@ public class AuthController {
             //tạo token
             String jwtToken = jwtUtils.generateToken(userDetails);
 
+            boolean isAdmin = userDetails.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
             // cho token vào cookie
             Cookie jwtCookie = new Cookie("JWT_TOKEN", jwtToken);
             jwtCookie.setPath("/");
             jwtCookie.setHttpOnly(true);
-            jwtCookie.setMaxAge(24 * 60 * 60);
+
+            if (isAdmin) {
+                jwtCookie.setMaxAge(-1);
+            } else {
+                jwtCookie.setMaxAge(24 * 60 * 60);
+            }
 
             response.addCookie(jwtCookie);
 
-            boolean isAdmin = userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
             if(isAdmin){
                 return "redirect:/admin";
             }else{

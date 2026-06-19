@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import thinh.shop.computer.dto.response.CartResponse;
 import thinh.shop.computer.entity.*;
+import thinh.shop.computer.mapper.CartMapper;
 import thinh.shop.computer.repository.AccountRepository;
 import thinh.shop.computer.repository.CartItemRepository;
 import thinh.shop.computer.repository.CartRepository;
@@ -15,16 +17,35 @@ import thinh.shop.computer.repository.ProductVariantRepository;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class CartService {
     @Autowired
-    public CartRepository cartRepository;
+    private CartRepository cartRepository;
     @Autowired
-    public CartItemRepository cartItemRepository;
+    private CartItemRepository cartItemRepository;
     @Autowired
-    public ProductVariantRepository productVariantRepository;
+    private ProductVariantRepository productVariantRepository;
     @Autowired
-    public AccountRepository accountRepository;
+    private AccountRepository accountRepository;
+    @Autowired
+    private CartMapper  cartMapper;
+
+    public CartResponse getCartResponse(String username) {
+
+        Cart cart = getCartEntityByUsername(username);
+
+        if (cart == null) {
+            return new CartResponse();
+        }
+
+        return cartMapper.toResponse(cart);
+    }
+
+    private Cart getCartEntityByUsername(String username) {
+        Account account = accountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy tài khoản!"));
+        Customer customer = account.getCustomer();
+        return cartRepository.findByCustomer(customer).orElse(null);
+    }
 
    @Transactional
    public void addToCart(Customer customer, Long variantId, Integer quantity) {
@@ -69,27 +90,21 @@ public class CartService {
            cartItemRepository.save(newItem);
        }
    }
-   public Cart getCartByUsername(String username) {
-       Account account = accountRepository.findByUsername(username)
-               .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy tài khoản!"));
-       Customer customer = account.getCustomer();
-       return cartRepository.findByCustomer(customer).orElse(null);
-   }
+
     @Transactional
     public void removeCartItem(String username, Long variantId) {
-        Cart cart = getCartByUsername(username);
+        Cart cart = getCartEntityByUsername(username);
 
         if (cart != null && cart.getCartItem() != null) {
-            cart.getCartItem().removeIf(item -> item.getVariants().getId().equals(variantId));
-
-            cartRepository.save(cart);
-        }
+            ProductVariant variant = productVariantRepository.findById(variantId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm!"));
+            cartItemRepository.deleteByCartAndVariants(cart, variant);        }
     }
 
         @Transactional
         public void clearCart(String username) {
 
-            Cart cart = getCartByUsername(username);
+            Cart cart = getCartEntityByUsername(username);
 
             if (cart != null && cart.getCartItem() != null) {
                 cart.getCartItem().clear();
@@ -103,7 +118,7 @@ public class CartService {
             throw new Exception("Số lượng không hợp lệ!");
         }
 
-        Cart cart = getCartByUsername(username);
+        Cart cart = getCartEntityByUsername(username);
         if (cart == null) {
             throw new Exception("Không tìm thấy giỏ hàng!");
         }

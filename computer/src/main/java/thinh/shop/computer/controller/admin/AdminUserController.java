@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import thinh.shop.computer.dto.response.AccountResponse;
 import thinh.shop.computer.entity.Account;
 import thinh.shop.computer.service.AccountService;
 
@@ -15,22 +17,13 @@ public class AdminUserController {
     public AccountService accountService;
     @GetMapping("/admin/accounts")
     public String adminAccounts(Model model) {
-        model.addAttribute("accounts",accountService.getAll());
+        model.addAttribute("accounts",accountService.getAllAccountsForAdmin());
         return "admin/accounts";
     }
 
     @PostMapping("/admin/accounts/toggle-status")
     public String toggleAccountStatus(@RequestParam("id") Long id) {
-
-
-        Account account = accountService.getAccount(id);
-
-
-        account.setActive(!account.isActive());
-
-
-        accountService.save(account);
-
-        return "redirect:admin/accounts";
+        accountService.toggleAccountStatus(id);
+        return "redirect:/admin/accounts";
     }
 }

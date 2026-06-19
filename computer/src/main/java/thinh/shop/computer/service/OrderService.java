@@ -1,12 +1,17 @@
 package thinh.shop.computer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import thinh.shop.computer.dto.response.OrderResponse;
+import thinh.shop.computer.dto.response.ProductResponse;
 import thinh.shop.computer.entity.*;
+import thinh.shop.computer.mapper.OrderMapper;
 import thinh.shop.computer.repository.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -20,12 +25,20 @@ public class OrderService {
     private OrderDetailRepository orderDetailRepository;
     @Autowired
     private ProductVariantRepository productVariantRepository;
+    @Autowired
+    private OrderMapper orderMapper;
 
-    public List<Order> getOrderByCustomer(Customer customer) {
-        return orderRepository.findByCustomerOrderByOrderDateDesc(customer);
+    public List<OrderResponse> getOrderByCustomer(Customer customer) {
+        List<Order> orders = orderRepository.findByCustomerOrderByOrderDateDesc(customer);
+        return orders.stream()
+                .map(orderMapper::toResponse)
+                .collect(Collectors.toList());
     }
-    public Order getOrder(Long id){
-        return orderRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy đơn hàng!"));
+
+    public OrderResponse getOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng!"));
+        return orderMapper.toResponse(order);
     }
     @Transactional
     public void createOrder(Customer customer,String address,String phone,String note,String name,String email){
@@ -70,6 +83,7 @@ public class OrderService {
         orderRepository.save(order);
         cartItemRepository.deleteAll(cartItems);
     }
+
     @Transactional
     public void deleteOrder(Long id){
         Order order = orderRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy đơn hàng!"));
@@ -85,13 +99,23 @@ public class OrderService {
         order.setStatus("CANCELED");
         orderRepository.save(order);
     }
-    public List<Order> getAllOrders(){
-        return orderRepository.findAll();
-    }
+
     public long  countOrders(){
         return orderRepository.count();
     }
-    public void save(Order order){
+
+    public List<OrderResponse> getAllOrdersForAdmin() {
+        List<Order> orders = orderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderDate"));
+        return orders.stream()
+                .map(orderMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateOrderStatus(Long id, String status) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng!"));
+        order.setStatus(status);
         orderRepository.save(order);
     }
 }
