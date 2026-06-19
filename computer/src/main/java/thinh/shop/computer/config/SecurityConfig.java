@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import thinh.shop.computer.utils.JwtAuthenticationFilter;
@@ -20,10 +18,12 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -31,21 +31,27 @@ public class SecurityConfig {
 
                 // PHÂN QUYỀN ĐƯỜNG DẪN
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/", "/register", "/login", "/products/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/cart/**", "/checkout/**", "/profile/**").hasRole("CUSTOMER")
+
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**").permitAll()
+
+                        .requestMatchers("/", "/register", "/login", "/products/**", "/search").permitAll()
+
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+
+                        .requestMatchers("/cart/**", "/checkout/**", "/profile/**").hasAuthority("ROLE_CUSTOMER")
+
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // CẤU HÌNH ĐĂNG XUẤT
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        .deleteCookies("JWT_TOKEN")
+                        .deleteCookies("JWT_TOKEN", "JSESSIONID")
+                        .invalidateHttpSession(true)
                         .permitAll()
                 );
 

@@ -47,16 +47,15 @@
                 <div class="row align-items-center">
 
                     <div class="col-2">
-                        <img th:src="${item.variants.image != null ? item.variants.image : item.variants.product.mainImage}" alt="Product" class="img-fluid rounded border">
+                        <img th:src="${item.imageUrl != null ? item.imageUrl : item.variants.product.mainImage}" alt="Product" class="img-fluid rounded border">
                     </div>
 
                     <div class="col-4">
                         <h6 class="mb-0 fw-bold" style="font-size: 14px;"
-                            th:text="${item.variants.product.name}">
+                            th:text="${item.productName}">
                         </h6>
                         <small class="text-muted d-block mt-1">
-                            <span th:each="attr, stat : ${item.variants.attributes}"
-                                  th:text="${attr.name} + ': ' + ${attr.value} + (!${stat.last} ? ' | ' : '')"></span>
+                            <span th:text="${#strings.listJoin(item.attributes, ' | ')}"></span>
                         </small>
                     </div>
 
@@ -64,21 +63,21 @@
                         <div class="quantity-control d-flex align-items-center border">
                             <input type="number" th:value="${item.quantity}" min="1"
                                    class="quantity-input"
-                                   th:data-price="${item.variants.price}"
-                                   th:data-id="${item.variants.id}"
+                                   th:data-price="${item.price}"
+                                   th:data-id="${item.variantId}"
                                    onchange="updateQuantity(this)">
                         </div>
                     </div>
 
                     <div class="col-2 text-end">
                         <span class="fw-bold text-red"
-                              th:text="${#numbers.formatDecimal(item.variants.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                              th:text="${#numbers.formatDecimal(item.subTotal, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                         </span>
                     </div>
 
                     <div class="col-1 text-end">
                         <form th:action="@{/cart/remove}" method="post">
-                            <input type="hidden" name="variantId" th:value="${item.variants.id}">
+                            <input type="hidden" name="variantId" th:value="${item.variantId}">
                             <button type="submit" class="btn-trash" title="Xóa khỏi giỏ">
                                 <i class="fa-regular fa-trash-can"></i>
                             </button>

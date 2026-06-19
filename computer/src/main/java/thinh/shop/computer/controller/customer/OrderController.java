@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import thinh.shop.computer.dto.response.OrderResponse;
 import thinh.shop.computer.entity.Account;
 import thinh.shop.computer.entity.Customer;
 import thinh.shop.computer.entity.Order;
@@ -28,8 +29,8 @@ public class OrderController {
         Account account = accountService.findByUsername(username);
         Customer customer = account.getCustomer();
 
-        List<Order> orders = orderService.getOrderByCustomer(customer);
-        model.addAttribute("orders", orders);
+        List<OrderResponse> orderResponse = orderService.getOrderByCustomer(customer);
+        model.addAttribute("orders", orderResponse);
         return "customer/order";
     }
     @PostMapping("/checkout")
@@ -54,8 +55,8 @@ public class OrderController {
     }
     @GetMapping("/order-detail")
     public String showOrderDetail(Model model,@RequestParam("id") Long id){
-        Order order = orderService.getOrder(id);
-        model.addAttribute("order",order);
+        OrderResponse orderResponse = orderService.getOrder(id);
+        model.addAttribute("order",orderResponse);
         return "customer/order-detail";
     }
     @PostMapping("/cancel-order")

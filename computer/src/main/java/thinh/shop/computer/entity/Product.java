@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,5 +36,5 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    private List<ProductVariant> variants;
+    private List<ProductVariant> variants = new ArrayList<>();
 }

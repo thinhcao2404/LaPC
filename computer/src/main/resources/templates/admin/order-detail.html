@@ -81,11 +81,11 @@
                             <tbody>
                             <tr th:each="detail : ${order.orderDetails}" class="border-bottom">
                                 <td class="ps-4 d-flex align-items-center py-3">
-                                    <img th:src="${detail.variants.product.mainImage != null ? detail.variants.product.mainImage : 'https://via.placeholder.com/50'}" class="rounded border me-3" style="width: 50px; height: 50px; object-fit: contain;">
+                                    <img th:src="${detail.mainImage != null ? detail.mainImage : 'https://via.placeholder.com/50'}" class="rounded border me-3" style="width: 50px; height: 50px; object-fit: contain;">
                                     <div>
-                                        <h6 class="mb-0 fw-bold" th:text="${detail.variants.product.name}"></h6>
+                                        <h6 class="mb-0 fw-bold" th:text="${detail.productName}"></h6>
                                         <small class="text-muted">
-                                            <span th:each="attr, stat : ${detail.variants.attributes}" th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                                            <span th:text="${detail.attributesString}"></span>
                                         </small>
                                     </div>
                                 </td>

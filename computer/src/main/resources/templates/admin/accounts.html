@@ -8,7 +8,6 @@
     <link rel="stylesheet" th:href="@{/css/admin/sidebar.css}">
 </head>
 <body>
-
 <div class="d-flex">
 
     <div th:replace="~{fragments/admin/menu :: menu('accounts')}"></div>
@@ -38,14 +37,14 @@
 
                         <td th:text="${acc.username}"></td>
 
-                        <td th:text="${acc.customer != null ? acc.customer.fullName : 'Chưa cập nhật'}"></td>
+                        <td th:text="${acc.fullName != null ? acc.fullName : 'Chưa cập nhật'}"></td>
 
                         <td>
-                            <small class="text-muted" th:text="${acc.customer != null ? acc.customer.phone : ''}"></small>
+                            <small class="text-muted" th:text="${acc.phone != null ? acc.phone : ''}"></small>
                         </td>
 
                         <td>
-                            <span th:each="r : ${acc.roles}" class="badge bg-info text-dark me-1" th:text="${r.name}"></span>
+                            <span th:each="r : ${acc.roles}" class="badge bg-info text-dark me-1" th:text="${r}"></span>
                         </td>
 
                         <td>

@@ -23,6 +23,9 @@ public class ProductVariant {
 
     private String image;
 
+    @Column(name = "is_active", columnDefinition = "bit default 1")
+    private Boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;

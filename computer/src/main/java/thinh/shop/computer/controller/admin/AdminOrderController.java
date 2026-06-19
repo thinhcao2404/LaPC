@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import thinh.shop.computer.entity.Order;
+import thinh.shop.computer.dto.response.OrderResponse;
 import thinh.shop.computer.service.OrderService;
 
 import java.util.List;
@@ -15,23 +15,22 @@ import java.util.List;
 public class AdminOrderController {
     @Autowired
     public OrderService orderService;
+
     @GetMapping("/admin/orders")
     public String manageOrders(Model model){
-        List<Order> allOrders =orderService.getAllOrders();
+        List<OrderResponse> allOrders =orderService.getAllOrdersForAdmin();
         model.addAttribute("orders",allOrders);
                 return "admin/admin-orders";
     }
     @GetMapping("/admin/order-detail")
     public String showOrderDetails(@RequestParam("id") Long id, Model model){
-        Order oder = orderService.getOrder(id);
-        model.addAttribute("order",oder);
+        OrderResponse  orderResponse = orderService.getOrder(id);
+        model.addAttribute("order",orderResponse);
         return "admin/order-detail";
     }
     @PostMapping("/admin/update-order-status")
     public String updateOrderStatus(@RequestParam("id") Long id, @RequestParam("newStatus") String status){
-        Order order = orderService.getOrder(id);
-        order.setStatus(status);
-        orderService.save(order);
-        return "redirect:admin/orders";
+        orderService.updateOrderStatus(id, status);
+        return "redirect:/admin/order-detail?id=" + id;
     }
 }

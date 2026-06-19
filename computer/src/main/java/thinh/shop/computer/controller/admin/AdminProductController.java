@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import thinh.shop.computer.dto.request.ProductCreateRequest;
 import thinh.shop.computer.dto.request.ProductUpdateRequest;
 import thinh.shop.computer.dto.request.VariantRequest;
+import thinh.shop.computer.dto.response.ProductResponse;
 import thinh.shop.computer.entity.Product;
 import thinh.shop.computer.entity.ProductVariant;
 import thinh.shop.computer.entity.VariantAttribute;
+import thinh.shop.computer.mapper.ProductMapper;
 import thinh.shop.computer.repository.ProductRepository;
 import thinh.shop.computer.repository.ProductVariantRepository;
 import thinh.shop.computer.service.BrandService;
@@ -26,17 +29,17 @@ import java.util.Set;
 @Controller
 public class AdminProductController {
     @Autowired
-    public CategoryService categoryService;
+    private CategoryService categoryService;
     @Autowired
-    public BrandService brandService;
+    private BrandService brandService;
     @Autowired
-    public ProductService productService;
+    private ProductService productService;
     @Autowired
-    public ProductVariantService productVariantService;
+    private ProductMapper productMapper;
 
     @GetMapping("/admin/products")
     public String manageProducts(Model model) {
-        List<Product> products = productService.allProduct();
+        List<ProductResponse> products = productService.getAllProductsForAdmin();
         model.addAttribute("products", products);
         return "admin/products";
     }
@@ -48,107 +51,52 @@ public class AdminProductController {
         request.getVariants().add(new VariantRequest());
 
         model.addAttribute("product", request);
-        model.addAttribute("categories",categoryService.getAllCategory());
+        model.addAttribute("categories",categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrand());
 
         return "admin/product-add";
     }
 
     @PostMapping("/admin/products/add")
-    public String saveProduct(@ModelAttribute("product") Product product, Model model) {
-
-        if (product.getVariants() != null) {
-            product.getVariants().removeIf(v -> v == null || v.getSku() == null || v.getSku().trim().isEmpty());
-
-            Set<String> skuSet = new HashSet<>();
-
-            for (ProductVariant variant : product.getVariants()) {
-                String currentSku = variant.getSku().trim();
-
-                if (!skuSet.add(currentSku)) {
-                    model.addAttribute("errorMessage", "Lỗi: Bạn đang nhập trùng Mã SKU (" + currentSku + ") ở 2 dòng cấu hình khác nhau!");
-                    model.addAttribute("categories", categoryService.getAllCategory());
-                    model.addAttribute("brands", brandService.getAllBrand());
-                    return "admin/product-add";
-                }
-
-
-                if (productVariantService.existsBySku(currentSku)) {
-                    model.addAttribute("errorMessage", "Lỗi: Mã SKU (" + currentSku + ") đã tồn tại trên hệ thống. Vui lòng đổi mã khác!");
-                    model.addAttribute("categories", categoryService.getAllCategory());
-                    model.addAttribute("brands", brandService.getAllBrand());
-                    return "admin/product-add";
-                }
-
-                variant.setProduct(product);
-
-                if (variant.getAttributes() != null) {
-                    variant.getAttributes().removeIf(attr ->
-                            attr == null ||
-                                    attr.getName() == null || attr.getName().trim().isEmpty() ||
-                                    attr.getValue() == null || attr.getValue().trim().isEmpty()
-                    );
-
-                    for (VariantAttribute attribute : variant.getAttributes()) {
-                        attribute.setVariant(variant);
-                    }
-                }
-            }
+    public String saveProduct(@ModelAttribute("product") ProductCreateRequest request, Model model) {
+        try{
+            productService.createProduct(request);
+            return "redirect:/admin/products";
+        }catch (Exception e){
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("categories",categoryService.getAllCategories());
+            model.addAttribute("brands",brandService.getAllBrand());
+            return "admin/product-add";
         }
-
-        productService.save(product);
-
-        return "redirect:admin/products";
     }
 
     @PostMapping("/admin/products/delete")
     public String  deleteProduct(@RequestParam("id") Long id) {
         productService.deleteById(id);
-        return "redirect:admin/products";
+        return "redirect:/admin/products";
     }
 
     @GetMapping("/admin/products/edit")
     public String editProduct(@RequestParam("id") Long id, Model model) {
-        Product product = productService.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
-        model.addAttribute("product", product);
-        model.addAttribute("categories",categoryService.getAllCategory());
+        Product product = productService.findById(id);
+        ProductUpdateRequest dto = productMapper.toUpdateRequestFromEntity(product);
+        model.addAttribute("product", dto);
+        model.addAttribute("categories",categoryService.getAllCategories());
         model.addAttribute("brands", brandService.getAllBrand());
         return "admin/product-edit";
-
     }
 
     @PostMapping("/admin/products/edit")
-    public String updateProduct(@ModelAttribute("product") Product product, Model model) {
-
-        if (product.getVariants() != null) {
-
-            product.getVariants().removeIf(v -> v == null || v.getSku() == null || v.getSku().trim().isEmpty());
-
-            for (ProductVariant variant : product.getVariants()) {
-                variant.setProduct(product);
-
-                if (variant.getAttributes() != null) {
-                    variant.getAttributes().removeIf(attr ->
-                            attr == null || attr.getName() == null || attr.getName().trim().isEmpty() ||
-                                    attr.getValue() == null || attr.getValue().trim().isEmpty()
-                    );
-
-                    for (VariantAttribute attribute : variant.getAttributes()) {
-                        attribute.setVariant(variant);
-                    }
-                }
-            }
-        }
-
-        try {
-            productService.save(product);
+    public String updateProduct(@ModelAttribute("product") ProductUpdateRequest request, Model model) {
+        try{
+            productService.updateProduct(request);
             return "redirect:/admin/products";
-
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi khi cập nhật: " + e.getMessage());
-            model.addAttribute("categories", categoryService.getAllCategory());
+        } catch (Exception e){
+            model.addAttribute("errorMessage", "Lỗi khi cập nhật:"+e.getMessage());
+            model.addAttribute("categories",categoryService.getAllCategories());
             model.addAttribute("brands", brandService.getAllBrand());
-            return "admin/product-edit";
+            return  "admin/product-edit";
         }
+
     }
 }

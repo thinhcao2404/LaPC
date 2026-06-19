@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import thinh.shop.computer.dto.response.ProductResponse;
 import thinh.shop.computer.entity.Customer;
 import thinh.shop.computer.entity.Product;
 import thinh.shop.computer.service.AccountService;
@@ -19,23 +20,21 @@ import java.security.Principal;
 public class ProductController {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private AccountService accountService;
+
     @Autowired
     private CartService cartService;
 
     @GetMapping("/detail")
     public String viewProductDetail(@RequestParam("id") Long id, Model model, Principal principal) {
-        Product product = productService.getProductById(id);
-        if(product == null){
+        ProductResponse productResponse = productService.getProductById(id);
+        if(productResponse == null){
             return "redirect:/";
         }
-        model.addAttribute("product", product);
+        model.addAttribute("product", productResponse);
 
         if (principal != null) {
             try {
-                Customer customer = accountService.findByUsername(principal.getName()).getCustomer();
-                int cartCount = cartService.getCartByUsername(principal.getName()).getCartItem().size();
+                int cartCount = cartService.getCartResponse(principal.getName()).getCalculatedTotal();
                 model.addAttribute("calculatedTotal", cartCount);
             } catch (Exception e) {
                 model.addAttribute("calculatedTotal", 0);
