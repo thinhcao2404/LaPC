@@ -17,7 +17,7 @@
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb m-0">
                 <li class="breadcrumb-item"><a href="/static">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a th:href="@{/category/{id}(id=${product.category.id})}" th:text="${product.category.name}"></a></li>
+                <li class="breadcrumb-item"><a th:href="@{/category/{id}(id=${product.categoryId})}" th:text="${product.categoryName}"></a></li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}"></li>
             </ol>
         </nav>
@@ -79,8 +79,7 @@
                                     th:data-price="${v.price}"
                                     th:data-stock="${v.stock}"  onclick="selectVariant(this)">
 
-                            <span th:each="attr, stat : ${v.attributes}"
-                                  th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                                <span th:text="${v.attributeString}"></span>
                             </button>
                         </div>
                     </div>
@@ -89,8 +88,7 @@
                         <p class="fw-bold mb-2">Cấu hình mặc định:</p>
                         <span class="badge bg-light text-dark border p-2 fs-6 rounded-pill">
                         <i class="fa-solid fa-circle-check text-success me-1"></i>
-                        <span th:each="attr, stat : ${product.variants[0].attributes}"
-                              th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                        <span th:text="${product.variants[0].attributeString}"></span>
                     </span>
                     </div>
 

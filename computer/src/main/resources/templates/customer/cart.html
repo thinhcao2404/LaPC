@@ -47,7 +47,8 @@
                 <div class="row align-items-center">
 
                     <div class="col-2">
-                        <img th:src="${item.imageUrl != null ? item.imageUrl : item.variants.product.mainImage}" alt="Product" class="img-fluid rounded border">
+                        <img th:src="${item.imageUrl != null and item.imageUrl != '' ? item.imageUrl : 'https://via.placeholder.com/150?text=NO+IMAGE'}"
+                             alt="Product" class="img-fluid rounded border">
                     </div>
 
                     <div class="col-4">
