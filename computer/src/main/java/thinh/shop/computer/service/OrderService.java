@@ -118,4 +118,8 @@ public class OrderService {
         order.setStatus(status);
         orderRepository.save(order);
     }
+
+    public List<Object[]> getMonthlyRevenueData() {
+        return orderRepository.getRevenueLast6Months();
+    }
 }

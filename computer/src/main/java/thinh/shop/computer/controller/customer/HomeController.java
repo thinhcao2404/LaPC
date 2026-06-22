@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import thinh.shop.computer.dto.response.BrandResponse;
 import thinh.shop.computer.dto.response.CategoryResponse;
 import thinh.shop.computer.dto.response.ProductResponse;
-import thinh.shop.computer.entity.Brand;
 import thinh.shop.computer.service.BrandService;
 import thinh.shop.computer.service.CartService;
 import thinh.shop.computer.service.CategoryService;

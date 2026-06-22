@@ -60,16 +60,15 @@
 
         <div class="card-body px-4 py-2">
             <div th:each="detail : ${order.orderDetails}" class="product-item d-flex align-items-center">
-                <img th:src="${detail.variants.product.mainImage != null ? detail.variants.product.mainImage : 'https://via.placeholder.com/80'}"
+                <img th:src="${detail.mainImage != null ? detail.mainImage : 'https://via.placeholder.com/80'}"
                      class="rounded border me-3" style="width: 80px; height: 80px; object-fit: contain;" alt="Hình sản phẩm">
 
                 <div class="flex-grow-1">
-                    <h6 class="fw-bold mb-1" th:text="${detail.variants.product.name}">Tên sản phẩm</h6>
+                    <h6 class="fw-bold mb-1" th:text="${detail.productName}">Tên sản phẩm</h6>
 
                     <div class="text-muted mb-1" style="font-size: 13px;">
                         Phân loại:
-                        <span th:each="attr, stat : ${detail.variants.attributes}"
-                              th:text="${attr.value} + (!${stat.last} ? ' - ' : '')"></span>
+                        <span th:each="attr, stat : ${detail.attributesString}"></span>
                     </div>
 
                     <div>

@@ -89,8 +89,8 @@
                             Tên sản phẩm mẫu
                         </h6>
                         <div class="text-danger fw-bold mt-auto" style="font-size: 1rem;">
-                            <span th:if="${not #lists.isEmpty(p.variants)}" th:text="${#numbers.formatDecimal(p.variants[0].price, 0, 'COMMA', 0, 'POINT')}">0</span>
-                            <span th:if="${#lists.isEmpty(p.variants)}">Liên hệ</span> đ
+                            <span th:if="${p.price != null and p.price > 0}" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')}">0</span>
+                            <span th:if="${p.price == null or p.price == 0}">Liên hệ</span> đ
                         </div>
                     </div>
                 </div>
