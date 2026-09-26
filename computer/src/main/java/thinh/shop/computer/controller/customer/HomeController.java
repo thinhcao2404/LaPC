@@ -72,5 +72,8 @@ public class HomeController {
         model.addAttribute("categoryList",categoryService.getAllCategories());
         return "customer/search";
     }
-
+    @GetMapping("/chinh-sach-bao-hanh")
+    public String warrantyPolicyPage(){
+        return "customer/warranty-policy";
+    }
 }

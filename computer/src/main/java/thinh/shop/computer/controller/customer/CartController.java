@@ -66,10 +66,6 @@ try {
 
     @GetMapping
     public String viewCart(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
-
         String username = principal.getName();
         CartResponse cartResponse = cartService.getCartResponse(username);
 

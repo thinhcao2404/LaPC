@@ -3,6 +3,7 @@ package thinh.shop.computer.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import thinh.shop.computer.dataloader.ProductVectorDataLoader;
 import thinh.shop.computer.dto.request.AttributeRequest;
 import thinh.shop.computer.dto.request.ProductCreateRequest;
 import thinh.shop.computer.dto.request.ProductUpdateRequest;
@@ -30,6 +31,8 @@ public class ProductService {
     public BrandRepository brandRepository;
     @Autowired
     private ProductVariantRepository productVariantRepository;
+    @Autowired
+    private ProductVectorDataLoader vectorDataLoader;
 
     public ProductResponse getProductById(Long productId){
         Product product = productRepository.findById(productId).orElse(null);
@@ -49,13 +52,20 @@ public class ProductService {
 
     public Product findById(Long productId){
        return  productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
-
     }
 
     @Transactional
     public void deleteById(Long productId) {
         try {
             productRepository.deleteById(productId);
+
+            // Xóa vector tương ứng trên Qdrant Cloud
+            try {
+                vectorDataLoader.deleteProductVector(productId);
+            } catch (Exception ex) {
+                System.err.println("Lỗi xóa vector cho sản phẩm ID " + productId + ": " + ex.getMessage());
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("Không thể xóa! Sản phẩm này đã phát sinh giao dịch hoặc đơn hàng.");
         }
@@ -120,7 +130,14 @@ public class ProductService {
 
         productMapper.updateEntityFromRequest(request, existingProduct, category, brand);
 
-        productRepository.save(existingProduct);
+        Product updatedProduct = productRepository.save(existingProduct);
+
+        // Cập nhật đè vector mới lên Qdrant Cloud (Upsert)
+        try {
+            vectorDataLoader.syncSingleProduct(updatedProduct);
+        } catch (Exception ex) {
+            System.err.println("Lỗi đồng bộ vector khi sửa sản phẩm ID " + updatedProduct.getId() + ": " + ex.getMessage());
+        }
     }
 
     @Transactional
@@ -146,7 +163,14 @@ public class ProductService {
 
         Product newProduct = productMapper.toEntityFromCreateRequest(request,category,brand);
 
-        productRepository.save(newProduct);
+        Product savedProduct = productRepository.save(newProduct);
+
+        // Đẩy vector mới của sản phẩm vừa tạo lên Qdrant Cloud
+        try {
+            vectorDataLoader.syncSingleProduct(savedProduct);
+        } catch (Exception ex) {
+            System.err.println("Lỗi đồng bộ vector khi tạo sản phẩm ID " + savedProduct.getId() + ": " + ex.getMessage());
+        }
     }
 
     public List<ProductResponse> getAllProductsForAdmin() {

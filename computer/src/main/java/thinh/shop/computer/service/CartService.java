@@ -60,12 +60,9 @@ public class CartService {
        ProductVariant variant = productVariantRepository.findById(variantId)
                .orElseThrow(() -> new RuntimeException("Không tìm thấy cấu hình sản phẩm này!"));
 
-
        Optional<CartItem> existingItem = cartItemRepository.findByCartAndVariants(cart, variant);
 
-
        int currentInCart = existingItem.map(CartItem::getQuantity).orElse(0);
-
 
        int totalRequested = currentInCart + quantity;
 
@@ -76,7 +73,6 @@ public class CartService {
                    : "Rất tiếc, kho chỉ còn tối đa " + variant.getStock() + " sản phẩm!";
            throw new RuntimeException(message);
        }
-
 
        if (existingItem.isPresent()) {
            CartItem item = existingItem.get();
@@ -101,17 +97,18 @@ public class CartService {
             cartItemRepository.deleteByCartAndVariants(cart, variant);        }
     }
 
-        @Transactional
-        public void clearCart(String username) {
+    @Transactional
+    public void clearCart(String username) {
 
-            Cart cart = getCartEntityByUsername(username);
+        Cart cart = getCartEntityByUsername(username);
 
-            if (cart != null && cart.getCartItem() != null) {
-                cart.getCartItem().clear();
+        if (cart != null && cart.getCartItem() != null) {
+            cart.getCartItem().clear();
 
-                cartRepository.save(cart);
-            }
+            cartRepository.save(cart);
         }
+    }
+
     @Transactional
     public void updateQuantity(String username, Long variantId, int quantity) throws Exception {
         if (quantity <= 0) {
