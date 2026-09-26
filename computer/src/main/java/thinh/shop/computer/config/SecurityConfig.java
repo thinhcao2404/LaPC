@@ -34,7 +34,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**").permitAll()
 
-                        .requestMatchers("/", "/register", "/login", "/products/**", "/search").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/products/**", "/search", "/category/**","/api/chat/**","/chinh-sach-bao-hanh").permitAll()
 
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
 
@@ -42,7 +42,11 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendRedirect("/login");
+                        })
+                )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
