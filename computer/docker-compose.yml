@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   mysql-db:
     image: mysql:8.0
     container_name: thinhpc-mysql
@@ -10,9 +9,9 @@ services:
       MYSQL_DATABASE: thinhpc_db
       MYSQL_ROOT_PASSWORD: 240405
     ports:
-        - "3307:3306"
+      - "3307:3306"
     volumes:
-        - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
   thinhpc-app:
     build: .
@@ -26,6 +25,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/thinhpc_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 240405
+      # Biến môi trường cho Gemini và Qdrant
+      SPRING_AI_GOOGLE_GENAI_API_KEY: ${GEMINI_API_KEY}
+      SPRING_AI_VECTORSTORE_QDRANT_HOST: ${QDRANT_HOST}
+      SPRING_AI_VECTORSTORE_QDRANT_PORT: ${QDRANT_PORT}
+      SPRING_AI_VECTORSTORE_QDRANT_USE_TLS: "true"
+      SPRING_AI_VECTORSTORE_QDRANT_API_KEY: ${QDRANT_API_KEY}
 
 volumes:
   mysql_data:
